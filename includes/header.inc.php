@@ -1,0 +1,1 @@
+<a href="/index.php">Home</a> | <a href="/read.php">Products</a> | <a href="/create.php">Add a Product</a>
