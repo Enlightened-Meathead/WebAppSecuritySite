@@ -1,45 +1,40 @@
-<?php require_once "db.inc.php"; ?>
+<?php require_once "./includes/db.inc.php"; ?>
 <html>
 <body>
 
-<?php include("./header.inc.php");?><br>
+<?php include("./includes/header.inc.php");?><br>
 <?php
 
 $myid = (int)$_REQUEST['id'];
 $myname = $_REQUEST['name'];
 $myprice = (float)$_REQUEST['price'];
 $mycomment = $_REQUEST['comment'];
-$mycal_per_cup = (int)$_REQUEST['cal_per_cup'];
+$mycal = (int)$_REQUEST['cal_per_cup'];
 
-if($_REQUEST['name']) {
-	$sql = "UPDATE products SET name=?, price=?, comment=?, cal_per_cup=? WHERE id=?";
-	echo "Name: $myname, Price: $myprice, Comment: $mycomment, Calories: $mycal_per_cup, ID: $myid";
-	//Create a prepared statement
-	$stmt = mysqli_stmt_init($mysqli);
+if ($_SESSION('username')) {
+	if($_REQUEST['name']) {
+		$sql = "UPDATE products SET name=?, price=?, comment=?, cal_per_cup=? WHERE id=?";
+		echo "Name: $myname, Price: $myprice, Comment: $mycomment, Calories: $mycal_per_cup, ID: $myid";
+		//Create a prepared statement
+		$stmt = mysqli_stmt_init($mysqli);
 
-	//Prepare the statement
-	if (!mysqli_stmt_prepare($stmt, $sql)){
-		echo "SQL statement preperation failed:" . $mysqli->error;
-	} else {
-		// Bind the parameters to the placeholder values in the sql variable query
-		mysqli_stmt_bind_param($stmt, "sdsii", $myname, $myprice, $mycomment, $mycal_per_cup, $myid);
-		
-		// Execute the statement
-		if (mysqli_stmt_execute($stmt)) {
-			echo "Product $myname updated successfully!";
+		//Prepare the statement
+		if (!mysqli_stmt_prepare($stmt, $sql)){
+			echo "SQL statement preperation failed:" . $mysqli->error;
 		} else {
-			"Execution failed: " . mysqli_stmt_error($stmt);
+			// Bind the parameters to the placeholder values in the sql variable query
+			mysqli_stmt_bind_param($stmt, "sdsii", $myname, $myprice, $mycomment, $mycal_per_cup, $myid);
+			
+			// Execute the statement
+			if (mysqli_stmt_execute($stmt)) {
+				echo "Product $myname updated successfully!";
+			} else {
+				"Execution failed: " . mysqli_stmt_error($stmt);
+			}
 		}
 	}
-
-	/*
-	// This is the procedural style to query the database
-	if(mysqli_query($mysqli, $sql) === TRUE){
-		echo "$myname updated successfully!";
-	} else {
-		echo "Error: $sql <br>" . mysqli_error($mysqli);
-	}
-	*/
+} else {
+	echo "Sorry partner, but you ain't logged in...";
 }
 
 $sql = "SELECT * FROM products WHERE id=$myid";

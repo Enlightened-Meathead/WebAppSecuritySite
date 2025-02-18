@@ -4,7 +4,7 @@
 <style>    h2 {        color: green;    }    </style>
 </head>
 <body>
-   <?php include("./header.inc.php");?>
+   <?php include("./includes/header.inc.php");?>
    <!-- Here's the header -->    
    <h1>Welcome!</h1>
    <img alt="Welcome Logo" src="./images/welcome_logo.jpeg" width="400" />    

@@ -1,38 +1,43 @@
-<?php require_once "db.inc.php"; ?>
+<?php require_once "./includes/db.inc.php"; ?>
 <html>
 <body>
 
-<?php include("./header.inc.php");?><br>
+<?php include("./includes/header.inc.php");?><br>
 <?php
 
-if($_GET['name']) {
+if ($_SESSION['username']) {
+	if($_GET['name']) {
 
-	// Grab user supplied parameters
-	$myname = $_REQUEST['name'];
-	$myprice = $_REQUEST['price'];
-	$mycomment = $_REQUEST['comment'];
-	$mycal_per_cup = $_REQUEST['cal_per_cup'];
+		// Grab user supplied parameters
+		$myname = $_REQUEST['name'];
+		$myprice = $_REQUEST['price'];
+		$mycomment = $_REQUEST['comment'];
+		$mycal_per_cup = $_REQUEST['cal_per_cup'];
 
-	// SQL query to be passes to the database
-	$sql = "INSERT INTO products (name, price, comment, cal_per_cup) VALUES (?, ?, ?, ?)";
+		// SQL query to be passes to the database
+		$sql = "INSERT INTO products (name, price, comment, cal_per_cup) VALUES (?, ?, ?, ?)";
 
-	//Create a prepared statement
-	$stmt = mysqli_stmt_init($mysqli);
+		//Create a prepared statement
+		$stmt = mysqli_stmt_init($mysqli);
 
-	//Prepare the statement
-	if (!mysqli_stmt_prepare($stmt, $sql)){
-		echo "SQL statement preperation failed:" . $mysqli->error;
-	} else {
-		// Bind the parameters to the placeholder values in the sql variable query
-		mysqli_stmt_bind_param($stmt, "sdsi", $myname, $myprice, $mycomment, $mycal_per_cup);
-		
-		// Execute the statement
-		if (mysqli_stmt_execute($stmt)) {
-			echo "Product $myname created successfully!";
+		//Prepare the statement
+		if (!mysqli_stmt_prepare($stmt, $sql)){
+			echo "SQL statement preperation failed:" . $mysqli->error;
 		} else {
-			"Execution failed: " . mysqli_stmt_error($stmt);
+			// Bind the parameters to the placeholder values in the sql variable query
+			mysqli_stmt_bind_param($stmt, "sdsi", $myname, $myprice, $mycomment, $mycal_per_cup);
+			
+			// Execute the statement
+			if (mysqli_stmt_execute($stmt)) {
+				echo "Product $myname created successfully!";
+			} else {
+				"Execution failed: " . mysqli_stmt_error($stmt);
+			}
 		}
 	}
+
+} else {
+	echo "Login, otherwise, YOU CAN'T CREATE NEW PRODUCTS >:(";
 }
 
 ?>

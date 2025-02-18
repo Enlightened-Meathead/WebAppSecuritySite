@@ -1,7 +1,7 @@
-<?php require_once "db.inc.php"; ?>
+<?php require_once "./includes/db.inc.php"; ?>
 <html>
 <body>
-<?php include("./header.inc.php");?>
+<?php include("./includes/header.inc.php");?>
 <h1>Products</h1>
 
 <?php
