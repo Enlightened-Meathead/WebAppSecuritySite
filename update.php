@@ -2,6 +2,7 @@
 <html>
 <body>
 
+<?php include("./includes/force_login.inc.php");?>
 <?php include("./includes/header.inc.php");?><br>
 <?php
 
@@ -11,10 +12,9 @@ $myprice = (float)$_REQUEST['price'];
 $mycomment = $_REQUEST['comment'];
 $mycal = (int)$_REQUEST['cal_per_cup'];
 
-if ($_SESSION('username')) {
+if ($_SESSION['username']) {
 	if($_REQUEST['name']) {
 		$sql = "UPDATE products SET name=?, price=?, comment=?, cal_per_cup=? WHERE id=?";
-		echo "Name: $myname, Price: $myprice, Comment: $mycomment, Calories: $mycal_per_cup, ID: $myid";
 		//Create a prepared statement
 		$stmt = mysqli_stmt_init($mysqli);
 
@@ -23,7 +23,7 @@ if ($_SESSION('username')) {
 			echo "SQL statement preperation failed:" . $mysqli->error;
 		} else {
 			// Bind the parameters to the placeholder values in the sql variable query
-			mysqli_stmt_bind_param($stmt, "sdsii", $myname, $myprice, $mycomment, $mycal_per_cup, $myid);
+			mysqli_stmt_bind_param($stmt, "sdsii", $myname, $myprice, $mycomment, $mycal, $myid);
 			
 			// Execute the statement
 			if (mysqli_stmt_execute($stmt)) {
@@ -43,7 +43,6 @@ $sql = "SELECT * FROM products WHERE id=$myid";
 $result = mysqli_query($mysqli, $sql);
 
 $row = mysqli_fetch_array($result);
-
 ?>
 
 <form>
@@ -53,13 +52,13 @@ $row = mysqli_fetch_array($result);
 	<input type="text" name="name" value="<?php echo $row['name'] ?>" /><br>
 
 	<label>Price:</label>
-	<input type="text" name="price" value="<?= $row['price'] ?>" /><br>
+	<input type="text" name="price" min="0.01" step="0.01" max="99"  value="<?= $row['price'] ?>" /><br>
 
 	<label>Comments:</label>
 	<input type="text" name="comment" value="<?= $row['comment'] ?>"/><br>
 
 	<label>Calories Per Cup:</label>
-	<input type="text" name="cal_per_cup" value="<?= $row['cal_per_cup'] ?>"/><br>
+	<input type="number" name="cal_per_cup" value="<?= $row['cal_per_cup'] ?>"/><br>
 
 	<input type="submit" value="update" />
 </form>

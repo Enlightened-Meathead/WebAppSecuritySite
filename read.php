@@ -3,6 +3,7 @@
 <body>
 <?php include("./includes/header.inc.php");?>
 <h1>Products</h1>
+<a href="/create.php">Add a Product</a><br>
 
 <?php
 

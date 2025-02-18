@@ -2,6 +2,7 @@
 <html>
 <body>
 
+<?php include("./includes/force_login.inc.php");?>
 <?php include("./includes/header.inc.php");?><br>
 <?php
 

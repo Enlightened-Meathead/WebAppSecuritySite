@@ -1,58 +1,84 @@
 <?php
 session_start();
-
-require_once "./includes/db.inc.php";
-include("./includes/header.inc.php");
-
-$myusername = $_REQUEST['username'];
-$mypassword = $_REQUEST['password'];
-
-$sql = "SELECT * FROM users WHERE username='$myusername' AND password=SHA2('$mypassword', 256)";
-
-$result = mysqli_query($mysqli, $sql);
-
-$row = mysqli_fetch_array($result);
-
-// This is what happens when a user successfully authenticates
-if(!empty($row)) {
-	// Delete any data in the current session to start new
-	session_destroy();
-	session_start();
-
-	$_SESSION['username'] = $row['username'];
-
+if($_SESSION["username"]) {
+	include("./includes/header.inc.php");
+	echo "<p>Welcome {$_SESSION['username']}</p>";
+	echo '<button onclick="window.location.href=\'logout.php\'">Logout</button>';
 	
-// This is what happens when the username and/or password doesn't match
+	
 } else {
-	echo "<p>Incorrect username OR password</p>";
-}
 
-if($_SESSION['username']) {
-	// Let's redirect instead of saying "Welcome" here
-	//echo "<p>Welcome {$_SESSION['username']}</p>";
+	require_once "./includes/db.inc.php";
+	include("./includes/header.inc.php");
 
-	header("Location: {$_REQUEST['redirect']}");
-	exit();
+	$myusername = $_REQUEST['username'];
+	$mypassword = $_REQUEST['password'];
 
-} else {
-?>
-<html>
-<body>
+	$sql = "SELECT * FROM users WHERE username='$myusername' AND password=SHA2('$mypassword', 256)";
 
-<form>
-	<input type="hidden" name="redirect" value="<?= $_REQUEST['redirect'] ?>" />
+	/*
+	//Create a prepared statement
+	$stmt = mysqli_stmt_init($mysqli);
+	//Prepare the statement
+	if (!mysqli_stmt_prepare($stmt, $sql)){
+		echo "SQL statement preperation failed:" . $mysqli->error;
+	} else {
+		// Bind the parameters to the placeholder values in the sql variable query
+		mysqli_stmt_bind_param($stmt, "ss", $myusername, $mypassword);
+		
+		// Execute the statement
+		if (mysqli_stmt_execute($stmt)) {
+			echo "<p>Login successful {$_REQUEST['username']}</p>";
+		} else {
+			"Execution failed: " . mysqli_stmt_error($stmt);
+		}
+	}
+	*/
+	$result = mysqli_query($mysqli, $sql);
 
-	<label>Username:</label>
-	<input type="text" name="username" />
+	$row = mysqli_fetch_array($result);
 
-	<label>Password:</label>
-	<input type="password" name="password" />
+	// This is what happens when a user successfully authenticates
+	if(!empty($row)) {
+		// Delete any data in the current session to start new
+		session_destroy();
+		session_start();
 
-	<input type="submit" value="Log In" />
-</form>
+		$_SESSION['username'] = $row['username'];
+	// This is what happens when the username and/or password doesn't match
+	} else if (!session_start()){
+		echo "<p>Incorrect username OR password</p>";
+	} else {
+		echo "<br>Please login:";
+	}
 
-<?php
-}
+	if($_SESSION['username']) {
+		// Let's redirect instead of saying "Welcome" here
+		echo "<p>Welcome {$_SESSION['username']}</p>";
+
+		header("Location: {$_REQUEST['redirect']}");
+		exit();
+
+	} else {
+	?>
+	<html>
+	<body>
+
+	<form>
+		<input type="hidden" name="redirect" value="<?= $_REQUEST['redirect'] ?>" />
+
+		<label>Username:</label>
+		<input type="text" name="username" />
+
+		<label>Password:</label>
+		<input type="password" name="password" />
+
+		<input type="submit" value="Log In" />
+	</form>
+
+	<?php
+	}
+	}
 ?>
 
 </body>
