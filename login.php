@@ -1,6 +1,6 @@
 <?php
 session_start();
-if($_SESSION["username"]) {
+if(strip_tags($_SESSION["username"])) {
 	include("./includes/header.inc.php");
 	echo "<p>Welcome {$_SESSION['username']}</p>";
 	echo '<button onclick="window.location.href=\'logout.php\'">Logout</button>';
@@ -11,8 +11,8 @@ if($_SESSION["username"]) {
 	require_once "./includes/db.inc.php";
 	include("./includes/header.inc.php");
 
-	$myusername = $_REQUEST['username'];
-	$mypassword = $_REQUEST['password'];
+	$myusername = strip_tags($_REQUEST['username']);
+	$mypassword = strip_tags($_REQUEST['password']);
 
 	$sql = "SELECT * FROM users WHERE username='$myusername' AND password=SHA2('$mypassword', 256)";
 

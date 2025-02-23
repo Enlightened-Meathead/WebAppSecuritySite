@@ -16,7 +16,7 @@
 $mysearch = "%" . strip_tags($_GET['search']). "%";
 
 // search query
-$sql = "SELECT * FROM products WHERE name OR comment LIKE ? ORDER BY name ASC";
+$sql = "SELECT * FROM products WHERE name LIKE ? OR comment LIKE ? ORDER BY name ASC";
 
 //Create a prepared statement
 $stmt = mysqli_stmt_init($mysqli);
@@ -27,7 +27,7 @@ if (!mysqli_stmt_prepare($stmt, $sql)){
 	echo "SQL statement preperation failed:" . $mysqli->error;
 } else {
 	// Bind the parameters to the placeholder values in the sql variable query
-	mysqli_stmt_bind_param($stmt, "s", $mysearch);
+	mysqli_stmt_bind_param($stmt, "ss", $mysearch, $mysearch);
 	
 	// Execute the statement
 	if (mysqli_stmt_execute($stmt)) {

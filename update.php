@@ -6,11 +6,11 @@
 <?php include("./includes/header.inc.php");?><br>
 <?php
 
-$myid = (int)$_REQUEST['id'];
-$myname = $_REQUEST['name'];
-$myprice = (float)$_REQUEST['price'];
-$mycomment = $_REQUEST['comment'];
-$mycal = (int)$_REQUEST['cal_per_cup'];
+$myid = strip_tags((int)$_REQUEST['id']);
+$myname = strip_tags($_REQUEST['name']);
+$myprice = strip_tags((float)$_REQUEST['price']);
+$mycomment = strip_tags($_REQUEST['comment']);
+$mycal = strip_tags((int)$_REQUEST['cal_per_cup']);
 
 if ($_SESSION['username']) {
 	if($_REQUEST['name']) {

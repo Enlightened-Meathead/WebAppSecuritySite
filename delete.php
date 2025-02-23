@@ -6,9 +6,9 @@
 <?php include("./includes/header.inc.php");?><br>
 <?php
 
-$myid = $_REQUEST['id'];
+$myid = strip_tags($_REQUEST['id']);
 
-if($_SESSION['username']) {
+if(strip_tags($_SESSION['username'])) {
 	$sql = "DELETE FROM products WHERE id=?";
 
 	//Create a prepared statement

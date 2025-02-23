@@ -6,14 +6,14 @@
 <?php include("./includes/header.inc.php");?><br>
 <?php
 
-if ($_SESSION['username']) {
-	if($_GET['name']) {
+if (strip_tags($_SESSION['username'])) {
+	if(strip_tags($_GET['name'])) {
 
 		// Grab user supplied parameters
-		$myname = $_REQUEST['name'];
-		$myprice = $_REQUEST['price'];
-		$mycomment = $_REQUEST['comment'];
-		$mycal_per_cup = $_REQUEST['cal_per_cup'];
+		$myname = strip_tags($_REQUEST['name']);
+		$myprice = strip_tags($_REQUEST['price']);
+		$mycomment = strip_tags($_REQUEST['comment']);
+		$mycal_per_cup = strip_tags($_REQUEST['cal_per_cup']);
 
 		// SQL query to be passes to the database
 		$sql = "INSERT INTO products (name, price, comment, cal_per_cup) VALUES (?, ?, ?, ?)";
