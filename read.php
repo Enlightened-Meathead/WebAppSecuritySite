@@ -35,20 +35,26 @@ if (!mysqli_stmt_prepare($stmt, $sql)){
 		//$result = mysqli_query($mysqli, $sql);
 
 		while($row = mysqli_fetch_array($result)) {
-			echo "---<br>{$row['name']} \${$row['price']} <b>Comment:</b> {$row['comment']} <b>Calories Per Cup:</b> {$row['cal_per_cup']}
+			echo <<<EOT
+				---<br>{$row['name']} \${$row['price']} <b>Comment:</b> {$row['comment']} <b>Calories Per Cup:</b> {$row['cal_per_cup']}
 				<a href='update.php?id={$row['id']}'>update</a> 
 				<a href='delete.php?id={$row['id']}'>delete</a>
-				<br>";
+				<button action='/cart/'>
+					<input type='hidden' name='product_id' value={$row['id']}/>
+					<input type='hidden' name='price' value={$row['price']}/>
+					<input type='button' value='Add to cart' />
+				</button>
+				<br>
+				EOT;
 		}
 		echo "---";
+
 	} else {
 		"Execution failed: " . mysqli_stmt_error($stmt);
 	}
 }
 
 ?>
-
-
 
 </body>
 </html>

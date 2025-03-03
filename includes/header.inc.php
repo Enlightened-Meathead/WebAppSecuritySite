@@ -1,1 +1,1 @@
-| <a href="/index.php">Home</a> | <a href="/read.php">Products</a> | <a href="/login.php">Login</a> |
+| <a href="/index.php">Home</a> | <a href="/read.php">Products</a> | <a href="/login.php">Login</a> | <a href="/cart/index.php">Cart</a> |
