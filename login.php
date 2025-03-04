@@ -14,9 +14,8 @@ if(strip_tags($_SESSION["username"])) {
 	$myusername = strip_tags($_REQUEST['username']);
 	$mypassword = strip_tags($_REQUEST['password']);
 
-	$sql = "SELECT * FROM users WHERE username='$myusername' AND password=SHA2('$mypassword', 256)";
+	$sql = "SELECT * FROM users WHERE username=? AND password=SHA2(?, 256)";
 
-	/*
 	//Create a prepared statement
 	$stmt = mysqli_stmt_init($mysqli);
 	//Prepare the statement
@@ -24,32 +23,28 @@ if(strip_tags($_SESSION["username"])) {
 		echo "SQL statement preperation failed:" . $mysqli->error;
 	} else {
 		// Bind the parameters to the placeholder values in the sql variable query
-		mysqli_stmt_bind_param($stmt, "ss", $myusername, $mypassword);
+		mysqli_stmt_bind_param($stmt, "ss", $myusername, $mypassword,);
 		
 		// Execute the statement
 		if (mysqli_stmt_execute($stmt)) {
-			echo "<p>Login successful {$_REQUEST['username']}</p>";
+			$result = mysqli_stmt_get_result($stmt);
+			$row = mysqli_fetch_array($result);
+			// This is what happens when a user successfully authenticates
+			if(!empty($row)) {
+				// Delete any data in the current session to start new
+				session_destroy();
+				session_start();
+
+				$_SESSION['username'] = $row['username'];
+			// This is what happens when the username and/or password doesn't match
+			} else if (!session_start()){
+				echo "<p>Incorrect username OR password</p>";
+			} else {
+				echo "<br>Please login:";
+			}
 		} else {
 			"Execution failed: " . mysqli_stmt_error($stmt);
 		}
-	}
-	*/
-	$result = mysqli_query($mysqli, $sql);
-
-	$row = mysqli_fetch_array($result);
-
-	// This is what happens when a user successfully authenticates
-	if(!empty($row)) {
-		// Delete any data in the current session to start new
-		session_destroy();
-		session_start();
-
-		$_SESSION['username'] = $row['username'];
-	// This is what happens when the username and/or password doesn't match
-	} else if (!session_start()){
-		echo "<p>Incorrect username OR password</p>";
-	} else {
-		echo "<br>Please login:";
 	}
 
 	if($_SESSION['username']) {

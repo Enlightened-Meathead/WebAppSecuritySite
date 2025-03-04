@@ -7,10 +7,10 @@ require_once $_SERVER['DOCUMENT_ROOT']."/includes/db.inc.php";
 include("../includes/header.inc.php");
 
 // Form variables
-$myproduct_id = $_REQUEST['product_id'];
-$myprice = $_REQUEST['price'];
-$myquantity = $_REQUEST['quantity'] ?: 1;
-$myremove_product_id = $_REQUEST['remove_product_id'];
+$myproduct_id = strip_tags($_REQUEST['id']);
+$myprice = strip_tags($_REQUEST['price']);
+$myquantity = strip_tags($_REQUEST['quantity'] ?: 1);
+$myremove_product_id = strip_tags($_REQUEST['remove_product_id']);
 
 // If the user requested an item to be removed, remove it
 if(!empty($myremove_product_id)) {

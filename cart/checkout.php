@@ -4,6 +4,7 @@ session_start();
 
 // Required our database connection
 require_once $_SERVER['DOCUMENT_ROOT']."/includes/db.inc.php";
+include("../includes/header.inc.php");
 
 // Check that there are contents in the cart, otherwise redirect back to show the empty cart message
 if(empty($_SESSION['cart'])) {
@@ -13,14 +14,14 @@ if(empty($_SESSION['cart'])) {
 
 
 // Form variables
-$myname = $_REQUEST['name'];
-$mystreet = $_REQUEST['street'];
-$mycity = $_REQUEST['city'];
-$mystate = $_REQUEST['state'];
-$myzip = $_REQUEST['zip'];
-$mycreditcard = $_REQUEST['creditcard'];
-$myexpiration = $_REQUEST['expiration'];
-$mysecuritycode = $_REQUEST['securitycode'];
+$myname = strip_tags($_REQUEST['name']);
+$mystreet = strip_tags($_REQUEST['street']);
+$mycity = strip_tags($_REQUEST['city']);
+$mystate = strip_tags($_REQUEST['state']);
+$myzip = strip_tags($_REQUEST['zip']);
+$mycreditcard = strip_tags($_REQUEST['creditcard']);
+$myexpiration = strip_tags($_REQUEST['expiration']);
+$mysecuritycode = strip_tags($_REQUEST['securitycode']);
 
 ?>
 <!DOCTYPE HTML>
@@ -50,8 +51,26 @@ $mysecuritycode = $_REQUEST['securitycode'];
 // If ALL of the fields have been submitted, enter the order
 if (!empty($myname) && !empty($mystreet) && !empty($mycity) && !empty($myzip) && !empty($mycreditcard) && !empty($myexpiration) && !empty($mysecuritycode)) {
 	// Insert the order into the database
-	$sql = "INSERT INTO orders (name, street, city, state, zip, creditcard, expiration, securitycode) VALUES ('$myname', '$mystreet', '$mycity', '$mystate', '$myzip', '$mycreditcard', '$myexpiration', '$mysecuritycode')";
-	mysqli_query($mysqli, $sql);
+	$sql = "INSERT INTO orders (name, street, city, state, zip, creditcard, expiration, securitycode) VALUES (?,?,?,?,?,?,?,?)";
+
+	//Create a prepared statement
+	$stmt = mysqli_stmt_init($mysqli);
+
+	//Prepare the statement
+	if (!mysqli_stmt_prepare($stmt, $sql)){
+		echo "SQL statement preperation failed:" . $mysqli->error;
+	} else {
+		// Bind the parameters to the placeholder values in the sql variable query
+		mysqli_stmt_bind_param($stmt, "ssssssss", $myname, $mystreet, $mycity, $mystate, $myzip, $mycreditcard, $myexpiration, $mysecuritycode);
+		
+		// Execute the statement
+		if (mysqli_stmt_execute($stmt)) {
+			echo "Order Placed.";
+		} else {
+			"Execution failed: " . mysqli_stmt_error($stmt);
+		}
+	}
+	//mysqli_query($mysqli, $sql);
 	$order_id = mysqli_insert_id($mysqli);
 
 	// Loop through the items in the shopping cart
@@ -79,8 +98,7 @@ if (!empty($myname) && !empty($mystreet) && !empty($mycity) && !empty($myzip) &&
 
 	// If one or more of the fields have been submitted, display an error message
 	if (isset($myname) || isset($mystreet) || isset($mycity) || isset($myzip) || isset($mycreditcard) || isset($myexpiration) || isset($mysecuritycode)) {
-		echo "<p class='error'>ERROR: Please complete all fields.</p>";
-
+		echo "<p class='error'>Please complete all fields.</p>";
 	}
 ?>
 

@@ -34,14 +34,6 @@ if(strip_tags($_SESSION['username'])) {
 	echo "Slow down there hacker... You aren't allowed to do that without logging in <.<";
 }
 
-/*
-// This is the object-oriented style to query the database
-if($mysqli->query($sql) === TRUE) {
-	echo "Successfully deleted.";
-} else {
-	echo "Error: $sql <br>" . $mysqli->error;
-}
-	*/
 
 ?>
 
