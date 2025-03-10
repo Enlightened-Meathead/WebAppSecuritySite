@@ -51,7 +51,9 @@ if(strip_tags($_SESSION["username"])) {
 		// Let's redirect instead of saying "Welcome" here
 		echo "<p>Welcome {$_SESSION['username']}</p>";
 
-		header("Location: {$_GET['redirect']}");
+		//header("Location: {$_GET['redirect']}");
+		//<input type="hidden" name="redirect" value="<?= $_GET['redirect'] \?\>" />
+		header("Location: login.php");
 		exit();
 
 	} else {
@@ -62,7 +64,6 @@ if(strip_tags($_SESSION["username"])) {
 	<form method="POST">
 		<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
-		<input type="hidden" name="redirect" value="<?= $_GET['redirect'] ?>" />
 
 		<label>Username:</label>
 		<input type="text" name="username" />
