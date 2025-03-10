@@ -7,10 +7,21 @@ require_once $_SERVER['DOCUMENT_ROOT']."/includes/db.inc.php";
 include("../includes/header.inc.php");
 
 // Form variables
-$myproduct_id = strip_tags($_REQUEST['id']);
-$myprice = strip_tags($_REQUEST['price']);
-$myquantity = strip_tags($_REQUEST['quantity'] ?: 1);
-$myremove_product_id = strip_tags($_REQUEST['remove_product_id']);
+$myproduct_id = strip_tags($_POST['id']);
+$myquantity = strip_tags($_POST['quantity'] ?: 1);
+$myremove_product_id = strip_tags($_GET['remove_product_id']);
+
+// Price
+// Prepare the statement
+$stmt = mysqli_prepare($mysqli, "SELECT price FROM products WHERE id=?");
+mysqli_stmt_bind_param($stmt, "i", $myproduct_id);
+
+// Run the query
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+// Get the results of a single row
+$row = mysqli_fetch_array($result);
+$myprice = $row['price'];
 
 // If the user requested an item to be removed, remove it
 if(!empty($myremove_product_id)) {
@@ -19,6 +30,11 @@ if(!empty($myremove_product_id)) {
 
 // If the user sent a product_id, add the quantity to the existing cart quantity
 if(!empty($myproduct_id)) {
+	if ($_POST['quantity'] > 1) {
+		$myquantity = $_POST['quantity'];
+	} else {
+		$myquantity = 1;
+	}
 	$_SESSION['cart'][$myproduct_id][$myprice] += $myquantity;
 }
 

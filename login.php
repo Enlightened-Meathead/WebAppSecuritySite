@@ -11,8 +11,8 @@ if(strip_tags($_SESSION["username"])) {
 	require_once "./includes/db.inc.php";
 	include("./includes/header.inc.php");
 
-	$myusername = strip_tags($_REQUEST['username']);
-	$mypassword = strip_tags($_REQUEST['password']);
+	$myusername = strip_tags($_POST['username']);
+	$mypassword = strip_tags($_POST['password']);
 
 	$sql = "SELECT * FROM users WHERE username=? AND password=SHA2(?, 256)";
 
@@ -20,7 +20,7 @@ if(strip_tags($_SESSION["username"])) {
 	$stmt = mysqli_stmt_init($mysqli);
 	//Prepare the statement
 	if (!mysqli_stmt_prepare($stmt, $sql)){
-		echo "SQL statement preperation failed:" . $mysqli->error;
+		echo "Error T-T";
 	} else {
 		// Bind the parameters to the placeholder values in the sql variable query
 		mysqli_stmt_bind_param($stmt, "ss", $myusername, $mypassword,);
@@ -43,7 +43,7 @@ if(strip_tags($_SESSION["username"])) {
 				echo "<br>Please login:";
 			}
 		} else {
-			"Execution failed: " . mysqli_stmt_error($stmt);
+			echo "Error T-T";
 		}
 	}
 
@@ -51,7 +51,7 @@ if(strip_tags($_SESSION["username"])) {
 		// Let's redirect instead of saying "Welcome" here
 		echo "<p>Welcome {$_SESSION['username']}</p>";
 
-		header("Location: {$_REQUEST['redirect']}");
+		header("Location: {$_GET['redirect']}");
 		exit();
 
 	} else {
@@ -59,8 +59,10 @@ if(strip_tags($_SESSION["username"])) {
 	<html>
 	<body>
 
-	<form>
-		<input type="hidden" name="redirect" value="<?= $_REQUEST['redirect'] ?>" />
+	<form method="POST">
+		<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
+		<input type="hidden" name="redirect" value="<?= $_GET['redirect'] ?>" />
 
 		<label>Username:</label>
 		<input type="text" name="username" />

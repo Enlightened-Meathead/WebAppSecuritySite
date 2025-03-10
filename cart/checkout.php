@@ -14,14 +14,14 @@ if(empty($_SESSION['cart'])) {
 
 
 // Form variables
-$myname = strip_tags($_REQUEST['name']);
-$mystreet = strip_tags($_REQUEST['street']);
-$mycity = strip_tags($_REQUEST['city']);
-$mystate = strip_tags($_REQUEST['state']);
-$myzip = strip_tags($_REQUEST['zip']);
-$mycreditcard = strip_tags($_REQUEST['creditcard']);
-$myexpiration = strip_tags($_REQUEST['expiration']);
-$mysecuritycode = strip_tags($_REQUEST['securitycode']);
+$myname = strip_tags($_POST['name']);
+$mystreet = strip_tags($_POST['street']);
+$mycity = strip_tags($_POST['city']);
+$mystate = strip_tags($_POST['state']);
+$myzip = strip_tags($_POST['zip']);
+$mycreditcard = strip_tags($_POST['creditcard']);
+$myexpiration = strip_tags($_POST['expiration']);
+$mysecuritycode = strip_tags($_POST['securitycode']);
 
 ?>
 <!DOCTYPE HTML>
@@ -58,7 +58,7 @@ if (!empty($myname) && !empty($mystreet) && !empty($mycity) && !empty($myzip) &&
 
 	//Prepare the statement
 	if (!mysqli_stmt_prepare($stmt, $sql)){
-		echo "SQL statement preperation failed:" . $mysqli->error;
+		echo "Error T-T";
 	} else {
 		// Bind the parameters to the placeholder values in the sql variable query
 		mysqli_stmt_bind_param($stmt, "ssssssss", $myname, $mystreet, $mycity, $mystate, $myzip, $mycreditcard, $myexpiration, $mysecuritycode);
@@ -67,7 +67,7 @@ if (!empty($myname) && !empty($mystreet) && !empty($mycity) && !empty($myzip) &&
 		if (mysqli_stmt_execute($stmt)) {
 			echo "Order Placed.";
 		} else {
-			"Execution failed: " . mysqli_stmt_error($stmt);
+			echo "Error T-T";
 		}
 	}
 	//mysqli_query($mysqli, $sql);
@@ -79,17 +79,34 @@ if (!empty($myname) && !empty($mystreet) && !empty($mycity) && !empty($myzip) &&
 			$shopping_cart_total += $item_quantity * $item_price;
 
 			// Foreach product ordered, add the product id, quantity, and price
-			$sql = "INSERT INTO line_items (order_id, product_id, quantity, price) VALUES ($order_id, $item_product_id, $item_quantity, $item_price)";
-			mysqli_query($mysqli, $sql);
+			$sql = "INSERT INTO line_items (order_id, product_id, quantity, price) VALUES (?,?,?,?)";
+			//Create a prepared statement
+			$stmt = mysqli_stmt_init($mysqli);
+
+			//Prepare the statement
+			if (!mysqli_stmt_prepare($stmt, $sql)){
+				echo "Error T-T";
+			} else {
+				// Bind the parameters to the placeholder values in the sql variable query
+				mysqli_stmt_bind_param($stmt, "ssss", $order_id, $item_product_id, $item_quantity, $item_price);
+				// Execute the statement
+				if (mysqli_stmt_execute($stmt)) {
+					echo "";
+				} else {
+					echo "Error T-T";
+				}
+			}
 		}
 	}
 
 	// Now that everything is entered into the database, empty the cart
 	unset($_SESSION['cart']);
-?>
-
+	echo "
 	<p>Thank you for your order! Your order confirmation number is <strong><?= $order_id ?></strong>, and you have been charged <strong>$<?= number_format($shopping_cart_total,2) ?></strong>. Please allow 5-30 business days to receive it in the post.</p>
 	<p><em>Just when you've forgotten about it, or decide you want a refund, it'll show up for sure! (Or just wait another day or two...)</em></p>
+	"
+?>
+
 
 <?php
 
@@ -103,7 +120,7 @@ if (!empty($myname) && !empty($mystreet) && !empty($mycity) && !empty($myzip) &&
 ?>
 
 <p>Please enter your billing details.</p>
-<form>
+<form method="POST">
 	<table>
 		<tr>
 			<th><label for="name">Name</label></th>

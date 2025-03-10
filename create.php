@@ -6,44 +6,48 @@
 <?php include("./includes/header.inc.php");?><br>
 <?php
 
-if (strip_tags($_SESSION['username'])) {
-	if(strip_tags($_GET['name'])) {
+if($_SESSION['csrf_token']===$_GET['csrf_token']){
+	if (strip_tags($_SESSION['username'])) {
+		if(strip_tags($_POST['name'])) {
 
-		// Grab user supplied parameters
-		$myname = strip_tags($_REQUEST['name']);
-		$myprice = strip_tags($_REQUEST['price']);
-		$mycomment = strip_tags($_REQUEST['comment']);
-		$mycal_per_cup = strip_tags($_REQUEST['cal_per_cup']);
+			// Grab user supplied parameters
+			$myname = strip_tags($_POST['name']);
+			$myprice = strip_tags($_POST['price']);
+			$mycomment = strip_tags($_POST['comment']);
+			$mycal_per_cup = strip_tags($_POST['cal_per_cup']);
 
-		// SQL query to be passes to the database
-		$sql = "INSERT INTO products (name, price, comment, cal_per_cup) VALUES (?, ?, ?, ?)";
+			// SQL query to be passes to the database
+			$sql = "INSERT INTO products (name, price, comment, cal_per_cup) VALUES (?, ?, ?, ?)";
 
-		//Create a prepared statement
-		$stmt = mysqli_stmt_init($mysqli);
+			//Create a prepared statement
+			$stmt = mysqli_stmt_init($mysqli);
 
-		//Prepare the statement
-		if (!mysqli_stmt_prepare($stmt, $sql)){
-			echo "SQL statement preperation failed:" . $mysqli->error;
-		} else {
-			// Bind the parameters to the placeholder values in the sql variable query
-			mysqli_stmt_bind_param($stmt, "sdsi", $myname, $myprice, $mycomment, $mycal_per_cup);
-			
-			// Execute the statement
-			if (mysqli_stmt_execute($stmt)) {
-				echo "Product $myname created successfully!";
+			//Prepare the statement
+			if (!mysqli_stmt_prepare($stmt, $sql)){
+				echo "SQL statement preperation failed:" . $mysqli->error;
 			} else {
-				"Execution failed: " . mysqli_stmt_error($stmt);
+				// Bind the parameters to the placeholder values in the sql variable query
+				mysqli_stmt_bind_param($stmt, "sdsi", $myname, $myprice, $mycomment, $mycal_per_cup);
+				
+				// Execute the statement
+				if (mysqli_stmt_execute($stmt)) {
+					echo "Product $myname created successfully!";
+				} else {
+					"Execution failed: " . mysqli_stmt_error($stmt);
+				}
 			}
 		}
+	} else {
+		echo "Login, otherwise, YOU CAN'T CREATE NEW PRODUCTS >:(";
 	}
-
 } else {
-	echo "Login, otherwise, YOU CAN'T CREATE NEW PRODUCTS >:(";
+	echo "CRSF Token Invalid.";
+
 }
 
 ?>
 
-<form>
+<form method="POST">
 	<label>Name:</label>
 	<input type="text" name="name" /><br>
 
